@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="manifest" href="/manifest.json">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+  </head>
+  <body>
+
+    <h1>사용자 기기의 토큰 가져오기</h1>
+    <h2 id="token"></h2>
+    <button id="copyKey">복사</button>
+
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/4.6.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/4.6.1/firebase-messaging.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+
+    <script>
+      // Initialize Firebase
+      // Firebase 프로젝트 생성 -> 프로젝트 설정 -> 웹 앱에 Firebase 추가 -> 복사해서 아래 위치에 붙여넣기.
+      var config = {};
+      firebase.initializeApp(config);
+
+      // Retrieve Firebase Messaging object.
+      const messaging = firebase.messaging();
+
+      console.log("Messaging Object..................");
+      console.log('messaging ', messaging);
+
+      // 알림 허용 요청
+      messaging.requestPermission().then(function() {
+        console.log('Notification permission granted.');
+        // TODO(developer): Retrieve an Instance ID token for use with FCM.
+      }).catch(function(err) {
+        console.log('Unable to get permission to notify.', err);
+      });
+
+      // 해당 기기 토큰 요청
+      messaging.getToken().then(function(currentToken) {
+        if (currentToken) {
+          console.log('currentToken' , currentToken);
+          document.querySelector("#token").innerHTML = currentToken;
+        } else {
+          console.log('No Instance ID token available. Request permission to generate one.');
+        }
+
+      }).catch(function(err) {
+        console.log('An error occurred while retrieving token. ', err);
+      });
+
+      // 클립보드 저장 함수
+      function copyToClipboard(val) {
+          var t = document.createElement("textarea");
+          document.body.appendChild(t);
+          t.value = val;
+          t.select();
+          document.execCommand('copy');
+          document.body.removeChild(t);
+          console.log('Copy Success!');
+      }
+
+      // 편의를 위한 토큰키 복사
+      document.getElementById('copyKey').addEventListener('click', function(){
+        copyToClipboard(document.getElementById("token").innerText);
+      });
+
+    </script>
+  </body>
+</html>
